@@ -22,21 +22,40 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedItem = 0;
+  WebViewController controllerHome;
+  WebViewController controllerListings;
 
 //  var url = "https://alpha.nestin.io/";
-  List<Widget> webViews = [
-    WebView(
-      initialUrl: "https://alpha.nestin.io/",
-      key: UniqueKey(),
-    ),
-    WebView(
-      initialUrl: "https://alpha.nestin.io/listings/",
-      key: UniqueKey(),
-    ),
-    Center(
-      child: Text("HEll"),
-    )
-  ];
+  List<Widget> get webViews {
+    return [
+      WebView(
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (controller) {
+          controllerHome = controller;
+        },
+        onPageFinished: (url){
+
+          controllerHome.evaluateJavascript('console.log("Subodh Chutiya1")'); // here comes the js code
+        },
+        initialUrl: "https://alpha.nestin.io/",
+        key: UniqueKey(),
+      ),
+      WebView(
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (controller) {
+          controllerListings = controller;
+        },
+        onPageFinished: (url){
+          controllerListings.evaluateJavascript('console.log("Subodh Chutiya2")'); // here comes the js code
+        },
+        initialUrl: "https://alpha.nestin.io/listings",
+        key: UniqueKey(),
+      ),
+      Center(
+        child: Text("HEll"),
+      )
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +82,6 @@ class _HomePageState extends State<HomePage> {
         },
         defaultSelectedIndex: 0,
       ),
-
       body: SafeArea(
         child: IndexedStack(
           index: _selectedItem,
