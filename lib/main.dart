@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       key: UniqueKey(),
     ),
     WebView(
-      initialUrl: "https://www.google.com",
+      initialUrl: "https://alpha.nestin.io/listings/",
       key: UniqueKey(),
     ),
     Center(
@@ -41,15 +41,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: CustomBottomNavigationBar(
-          iconList: [
-            Icons.home,
-            Icons.map,
-            Icons.person,
-          ],
-          onChange: (val) {
-            setState(() {
-              _selectedItem = val;
+      bottomNavigationBar: CustomBottomNavigationBar(
+        iconList: [
+          Icons.home,
+          Icons.map,
+          Icons.person,
+        ],
+        onChange: (val) {
+          setState(() {
+            _selectedItem = val;
 //              switch (_selectedItem) {
 //                case 0:
 //                  url = "https://alpha.nestin.io/";
@@ -59,17 +59,18 @@ class _HomePageState extends State<HomePage> {
 //                  break;
 //                default:
 //              }
-            });
-          },
-          defaultSelectedIndex: 0,
-        ),
-        appBar: AppBar(
-          title: Text("Home"),
-        ),
-        body: IndexedStack(
+          });
+        },
+        defaultSelectedIndex: 0,
+      ),
+
+      body: SafeArea(
+        child: IndexedStack(
           index: _selectedItem,
           children: webViews,
-        ));
+        ),
+      ),
+    );
   }
 }
 
