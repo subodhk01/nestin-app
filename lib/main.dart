@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedItem = 0;
+  var url = "https://alpha.nestin.io/";
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,15 @@ class _HomePageState extends State<HomePage> {
         onChange: (val) {
           setState(() {
             _selectedItem = val;
+            switch (_selectedItem) {
+              case 0:
+                url = "https://alpha.nestin.io/";
+                break;
+              case 1:
+                url = "https://alpha.nestin.io/listings/";
+                break;
+              default:
+            }
           });
         },
         defaultSelectedIndex: 1,
@@ -42,10 +52,7 @@ class _HomePageState extends State<HomePage> {
         title: Text("Home"),
       ),
       body: Center(
-        child: Text(
-          "Hello from Item $_selectedItem",
-          style: TextStyle(fontSize: 26),
-        ),
+        child: Text(url),
       ),
     );
   }
