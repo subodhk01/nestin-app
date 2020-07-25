@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-void main() {
+void main()  {
   runApp(FinantialApp());
 }
 
 class FinantialApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Finantial App",
-      home: HomePage(),
+      home: HomePage( ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  String jsCode;
   int _selectedItem = 0;
   WebViewController controllerHome;
   WebViewController controllerListings;
@@ -35,7 +39,7 @@ class _HomePageState extends State<HomePage> {
         },
         onPageFinished: (url){
 
-          controllerHome.evaluateJavascript('console.log("Subodh Chutiya1")'); // here comes the js code
+          controllerHome.evaluateJavascript(jsCode); // here comes the js code
         },
         initialUrl: "https://alpha.nestin.io/",
         key: UniqueKey(),
@@ -82,11 +86,23 @@ class _HomePageState extends State<HomePage> {
         },
         defaultSelectedIndex: 0,
       ),
-      body: SafeArea(
-        child: IndexedStack(
-          index: _selectedItem,
-          children: webViews,
-        ),
+      body: FutureBuilder<String>(
+        future:  rootBundle.loadString('assets/js/js_code.js'),
+        builder: (context, snapshot) {
+          if(snapshot.hasData){
+            jsCode = snapshot.data;
+            return SafeArea(
+              child: IndexedStack(
+                index: _selectedItem,
+                children: webViews,
+              ),
+            );
+          }
+          else{
+            return Center(child: CircularProgressIndicator(),);
+          }
+
+        }
       ),
     );
   }
@@ -99,8 +115,8 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
   CustomBottomNavigationBar(
       {this.defaultSelectedIndex = 0,
-      @required this.iconList,
-      @required this.onChange});
+        @required this.iconList,
+        @required this.onChange});
 
   @override
   _CustomBottomNavigationBarState createState() =>
@@ -146,15 +162,15 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         width: MediaQuery.of(context).size.width / _iconList.length,
         decoration: index == _selectedIndex
             ? BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 2, color: Colors.blue),
-                ),
-                gradient: LinearGradient(colors: [
-                  Colors.blue.withOpacity(0.3),
-                  Colors.blue.withOpacity(0.015),
-                ], begin: Alignment.bottomCenter, end: Alignment.topCenter)
-                // color: index == _selectedItemIndex ? Colors.green : Colors.white,
-                )
+            border: Border(
+              bottom: BorderSide(width: 2, color: Colors.blue),
+            ),
+            gradient: LinearGradient(colors: [
+              Colors.blue.withOpacity(0.3),
+              Colors.blue.withOpacity(0.015),
+            ], begin: Alignment.bottomCenter, end: Alignment.topCenter)
+          // color: index == _selectedItemIndex ? Colors.green : Colors.white,
+        )
             : BoxDecoration(),
         child: Icon(
           icon,
