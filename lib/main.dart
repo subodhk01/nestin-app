@@ -24,7 +24,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String jsCode;
+  String jsCode = "console.log('page loaded')";
   int _selectedItem = 0;
   WebViewController controllerHome;
   WebViewController controllerListings;

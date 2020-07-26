@@ -1,5 +1,5 @@
-name: nestin
-description: A new Flutter project.
+name: Nestin
+description: Nestin iOS app
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   webview_flutter: ^0.3.22+1
+  flutter_launcher_icons: ^0.7.4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -33,6 +34,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
+flutter_icons:
+    image_path: 'assets/icon.png'
+    android: true
+    ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
