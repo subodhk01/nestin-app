@@ -28,32 +28,63 @@ class _HomePageState extends State<HomePage> {
   int _selectedItem = 0;
   WebViewController controllerHome;
   WebViewController controllerListings;
+  bool _loadingTabOne = false;
+  bool _loadingTabTwo = false;
+  final _firstWebViewKey = UniqueKey();
+  final _secondWebViewKey = UniqueKey();
 
 //  var url = "https://alpha.nestin.io/";
   List<Widget> get webViews {
     return [
-      WebView(
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (controller) {
-          controllerHome = controller;
-        },
-        onPageFinished: (url){
-
-          controllerHome.evaluateJavascript(jsCode); // here comes the js code
-        },
-        initialUrl: "https://alpha.nestin.io/",
-        key: UniqueKey(),
+      Stack(
+        children: <Widget>[
+          WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (controller) {
+              controllerHome = controller;
+            },
+            onPageFinished: (url){
+              setState(() {
+                _loadingTabOne = false;
+              });
+              controllerHome.evaluateJavascript(jsCode); // here comes the js code
+            },
+            onPageStarted: (url){
+              setState(() {
+                _loadingTabOne = true;
+              });
+            },
+            initialUrl: "https://alpha.nestin.io/",
+            key: _firstWebViewKey,
+          ),
+          _loadingTabOne ? Center(child: CircularProgressIndicator(),) : Container(),
+        ],
       ),
-      WebView(
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (controller) {
-          controllerListings = controller;
-        },
-        onPageFinished: (url){
-          controllerListings.evaluateJavascript('console.log("Subodh Chutiya2")'); // here comes the js code
-        },
-        initialUrl: "https://alpha.nestin.io/listings",
-        key: UniqueKey(),
+      Stack(
+        children: <Widget>[
+          WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (controller) {
+              controllerListings = controller;
+            },
+
+            onPageFinished: (url){
+              setState(() {
+                _loadingTabTwo = false;
+              });
+              controllerListings.evaluateJavascript('console.log("Subodh Chutiya2")'); // here comes the js code
+            },
+            onPageStarted: (url){
+              setState(() {
+                _loadingTabTwo = true;
+              });
+            },
+            initialUrl: "https://alpha.nestin.io/listings",
+            key: _secondWebViewKey,
+
+          ),
+          _loadingTabOne ? Center(child: CircularProgressIndicator(),) : Container(),
+        ],
       ),
       Center(
         child: Text("HEll"),
