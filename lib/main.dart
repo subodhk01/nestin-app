@@ -1,27 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-void main() {
+void main()  {
   runApp(FinantialApp());
 }
 
 class FinantialApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Finantial App",
-      home: HomePage(),
+      home: HomePage( ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  String jsCode = "console.log('page loaded')";
   int _selectedItem = 0;
-  var url = "https://alpha.nestin.io/";
+  WebViewController controllerHome;
+  WebViewController controllerListings;
+  bool _loadingTabOne = false;
+  bool _loadingTabTwo = false;
+  final _firstWebViewKey = UniqueKey();
+  final _secondWebViewKey = UniqueKey();
+
+//  var url = "https://alpha.nestin.io/";
+  List<Widget> get webViews {
+    return [
+      Stack(
+        children: <Widget>[
+          WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (controller) {
+              controllerHome = controller;
+            },
+            onPageFinished: (url){
+              setState(() {
+                _loadingTabOne = false;
+              });
+              controllerHome.evaluateJavascript(jsCode); // here comes the js code
+            },
+            onPageStarted: (url){
+              setState(() {
+                _loadingTabOne = true;
+              });
+            },
+            initialUrl: "https://alpha.nestin.io/",
+            key: _firstWebViewKey,
+          ),
+          _loadingTabOne ? Center(child: CircularProgressIndicator(),) : Container(),
+        ],
+      ),
+      Stack(
+        children: <Widget>[
+          WebView(
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (controller) {
+              controllerListings = controller;
+            },
+
+            onPageFinished: (url){
+              setState(() {
+                _loadingTabTwo = false;
+              });
+              controllerListings.evaluateJavascript('console.log("Subodh Chutiya2")'); // here comes the js code
+            },
+            onPageStarted: (url){
+              setState(() {
+                _loadingTabTwo = true;
+              });
+            },
+            initialUrl: "https://alpha.nestin.io/listings",
+            key: _secondWebViewKey,
+
+          ),
+          _loadingTabOne ? Center(child: CircularProgressIndicator(),) : Container(),
+        ],
+      ),
+      Center(
+        child: Text("HEll"),
+      )
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,24 +104,36 @@ class _HomePageState extends State<HomePage> {
         onChange: (val) {
           setState(() {
             _selectedItem = val;
-            switch (_selectedItem) {
-              case 0:
-                url = "https://alpha.nestin.io/";
-                break;
-              case 1:
-                url = "https://alpha.nestin.io/listings/";
-                break;
-              default:
-            }
+//              switch (_selectedItem) {
+//                case 0:
+//                  url = "https://alpha.nestin.io/";
+//                  break;
+//                case 1:
+//                  url = "https://alpha.nestin.io/listings/";
+//                  break;
+//                default:
+//              }
           });
         },
-        defaultSelectedIndex: 1,
+        defaultSelectedIndex: 0,
       ),
-      appBar: AppBar(
-        title: Text("Home"),
-      ),
-      body: Center(
-        child: Text(url),
+      body: FutureBuilder<String>(
+        future:  rootBundle.loadString('assets/js/js_code.js'),
+        builder: (context, snapshot) {
+          if(snapshot.hasData){
+            jsCode = snapshot.data;
+            return SafeArea(
+              child: IndexedStack(
+                index: _selectedItem,
+                children: webViews,
+              ),
+            );
+          }
+          else{
+            return Center(child: CircularProgressIndicator(),);
+          }
+
+        }
       ),
     );
   }
@@ -65,8 +146,8 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
   CustomBottomNavigationBar(
       {this.defaultSelectedIndex = 0,
-      @required this.iconList,
-      @required this.onChange});
+        @required this.iconList,
+        @required this.onChange});
 
   @override
   _CustomBottomNavigationBarState createState() =>
@@ -112,15 +193,15 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         width: MediaQuery.of(context).size.width / _iconList.length,
         decoration: index == _selectedIndex
             ? BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 2, color: Colors.blue),
-                ),
-                gradient: LinearGradient(colors: [
-                  Colors.blue.withOpacity(0.3),
-                  Colors.blue.withOpacity(0.015),
-                ], begin: Alignment.bottomCenter, end: Alignment.topCenter)
-                // color: index == _selectedItemIndex ? Colors.green : Colors.white,
-                )
+            border: Border(
+              bottom: BorderSide(width: 2, color: Colors.blue),
+            ),
+            gradient: LinearGradient(colors: [
+              Colors.blue.withOpacity(0.3),
+              Colors.blue.withOpacity(0.015),
+            ], begin: Alignment.bottomCenter, end: Alignment.topCenter)
+          // color: index == _selectedItemIndex ? Colors.green : Colors.white,
+        )
             : BoxDecoration(),
         child: Icon(
           icon,
